@@ -5,6 +5,7 @@ import uuid
 import bitcoin
 from pathlib import Path
 from eth_utils.hexidecimal import encode_hex, add_0x_prefix
+from eth_utils.address import is_hex_address
 from .utils import generate_uuid, is_uuid, new_keypair
 from icenine.core import log
 from icenine.contrib.keys import decode_keystore_json, privtoaddr
@@ -17,8 +18,23 @@ filesystem
 https://github.com/ethereum/wiki/wiki/Web3-Secret-Storage-Definition
 """
 
-KEYSTORE_WINDOWS = "~/AppData/Web3/keystore"
-KEYSTORE_NIX = "~/.web3/keystore"
+KEYSTORE_WINDOWS = Path(os.path.expanduser("~/AppData/Web3/keystore"))
+KEYSTORE_NIX = Path(os.path.expanduser("~/.web3/keystore"))
+
+# Set one that can be used right away
+if sys.platform == 'win32':
+    KEYSTORE_SYSTEM = KEYSTORE_WINDOWS
+else:
+    KEYSTORE_SYSTEM = KEYSTORE_NIX
+
+# Make sure the directory exists
+if not KEYSTORE_SYSTEM.exists():
+    KEYSTORE_SYSTEM.mkdir(mode=0o750, parents=True)
+
+""" Exceptions """
+class PasswordException(Exception): 
+    pass
+
 
 class KeyStoreFile:
     """ Model for a keystore file 
@@ -28,6 +44,7 @@ class KeyStoreFile:
         privkey
         pubkey
         address
+        password
         uuid
         path
     """
@@ -40,6 +57,7 @@ class KeyStoreFile:
             self.path = None
         self.privkey = None
         self.pubkey = None
+        self.password = None
         self.address = None
         self.uuid = None
         self.keystoreObject = None
@@ -53,6 +71,8 @@ class KeyStoreFile:
         # Make sure it exists
         if not self.path.exists():
             raise FileNotFoundError("%s does not exist" % str(self.path))
+
+        log.info("Loading keystore file %s" % self.path)
         
         # Open it
         with self.path.open() as keystore:
@@ -60,6 +80,8 @@ class KeyStoreFile:
             self.keystoreObject = json.loads(keystore.read())
             self.address = add_0x_prefix(self.keystoreObject['address'])
             self.uuid = self.keystoreObject['id']
+
+            log.info("Loaded account %s" % self.address)
 
     def unlock(self, password):
         """ Load the keystore json file 
@@ -69,6 +91,8 @@ class KeyStoreFile:
             password : string
                 The password to decrypt the file with
         """
+
+        self.info("Unlocking account %s" % self.address)
         
         # Decrypt
         self.privkey = json_string = decode_keystore_json(self.keystoreObject, password)
@@ -76,11 +100,14 @@ class KeyStoreFile:
 
     def lock(self):
         """ Get the important bits out of memory """
+
+        self.info("Locking account %s" % self.address)
+
         self.privkey = None
         self.pubkey = None
         self.password = None
 
-    def save(self, password, privkey=None):
+    def save(self, password=None, privkey=None):
         """ Save keystore file 
             
             Arguments
@@ -90,6 +117,9 @@ class KeyStoreFile:
             password : string
                 The password to encrypt the file with
         """
+
+        if not password and not self.password:
+            raise PasswordException("Need a password to save the keyfile.")
 
         if not privkey and not self.privkey:
             raise ValueError("Account does not appear to have been properly generated or loaded. Cannot save.")
@@ -101,10 +131,9 @@ class KeyStoreFile:
         self.keystoreObject = make_keystore_json(self.privkey, self.password)
 
         if not self.path:
-            if sys.platform == 'win32':
-                self.loc = Path(os.path.join("~/AppData/Web3/keystore", self.keystoreObject['id']))
-            else:
-                self.loc = Path(os.path.join("~/.web3/keystore", self.keystoreObject['id']))
+            self.loc = Path(os.path.join(KEYSTORE_SYSTEM, self.keystoreObject['id']))
+
+        log.info("Saving account %s to %s" % (self.address, self.path))
 
         with self.path.open('w') as keystore:
             
@@ -135,20 +164,26 @@ class Accounts:
         if location:
             self.loc = Path(location)
         else:
-            if sys.platform == 'win32':
-                self.loc = Path("~/AppData/Web3/keystore")
-            else:
-                self.loc = Path("~/.web3/keystore")
+            self.loc = KEYSTORE_SYSTEM
+
+    def __len__(self):
+        return len(self.accounts)
+
+    def __iter__(self):
+        return iter(self.accounts)
 
     def load_accounts(self):
         """ Load all the accounts we can find in location """
+
+        log.info("Loading accounts from %s" % self.loc)
 
         # Reset accounts list
         self.accounts = []
 
         # Load file(s)
         if self.loc.is_file():
-            self.load(self.loc)
+            ksf = KeyStoreFile(self.loc)
+            self.accounts.append(ksf)
 
         elif self.loc.is_dir():
             for file in self.loc.iterdir():
@@ -169,6 +204,8 @@ class Accounts:
 
     def new_account(self, password):
         """ Create a new account """
+
+        log.info("Creating new Ethereum account")
 
         # Create new keypair
         privkey,pubkey = new_keypair()

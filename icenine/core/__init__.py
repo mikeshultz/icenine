@@ -1,5 +1,6 @@
 import os
-import logging as log
+import sys
+import logging
 import configparser
 
 CONFIG = configparser.ConfigParser()
@@ -10,21 +11,29 @@ else:
 CONFIG.read(os.path.expanduser(confPath))
 
 LOG_LEVEL_TRANSLATE = {
-    'debug': log.DEBUG,
-    'info': log.INFO,
-    'warning': log.WARNING,
-    'error': log.ERROR,
-    'critical': log.CRITICAL,
+    'debug': logging.DEBUG,
+    'info': logging.INFO,
+    'warning': logging.WARNING,
+    'error': logging.ERROR,
+    'critical': logging.CRITICAL,
 }
 
-bcKwargs = {}
+log = logging.getLogger("icenine")
 
 # Set loglevel
-bcKwargs['level'] = LOG_LEVEL_TRANSLATE[CONFIG.get('default', 'loglevel', fallback='warning')]
+log.setLevel(LOG_LEVEL_TRANSLATE[CONFIG.get('default', 'loglevel', fallback='info')])
 
-# Try and set logfile location if available
+# Set log format
+standardFormat = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+
+# Try and set logfile location if available, otherwise stdout
 try:
-    bcKwargs["filename"] = CONFIG.get('default', 'logfile')
-except: pass
+    out = logging.FileHandler(CONFIG.get('default', 'logfile'))
+    print("Logging to file")
+except: 
+    out = logging.StreamHandler(sys.stdout)
+    print("Logging to stdout")
 
-log.basicConfig(**bcKwargs)
+# Set format    
+out.setFormatter(standardFormat)
+log.addHandler(out)

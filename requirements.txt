@@ -6,3 +6,4 @@ secp256k1==0.13.2
 pycryptodome==3.4.6
 scrypt==0.8.0
 bitcoin==1.1.42
+PyQt5~=5.9

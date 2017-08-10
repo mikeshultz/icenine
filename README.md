@@ -7,6 +7,31 @@ Ethereum cold storage wallet
     accts = Accounts('.')
     accts.load_accounts()
 
+## UI Development
+
+### Generate GUI
+
+    pyuic5 icenine/ui/mainwindow.ui -o icenine/ui/gui.py --import-from=icenine.ui
+    pyuic5 icenine/ui/passwordmodal.ui -o icenine/ui/passwordgui.py --import-from=icenine.ui
+
+### Generate Assets
+
+    pyrcc5 icenine/ui/assets/assets.qrc -o icenine/ui/assets_rc.py
+
+## Contrib Libraries
+
+This is awful, but some modules have been brought in from pyethereum so the 
+entire node implementation doesn't need to be a dependency.  These should be 
+checked for update often.
+
+### [transactions.py](https://github.com/ethereum/pyethereum/blob/develop/ethereum/transactions.py) 
+(Last updated: 2017-08-08)
+
+This file was all hacked up.  It should really be reimplemented
+
+### [keys.py](https://github.com/ethereum/pyethereum/blob/develop/ethereum/tools/keys.py) 
+(Last updated: 2017-08-08)
+
 ## Notes
 
 - HD wallet is not suitable, jaxx is dropping it as well.
