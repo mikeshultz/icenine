@@ -8,6 +8,7 @@ from eth_utils.hexidecimal import encode_hex, add_0x_prefix
 from eth_utils.address import is_hex_address
 from .utils import generate_uuid, is_uuid, new_keypair
 from icenine.core import log
+from icenine.core.metadata import AccountMeta
 from icenine.contrib.keys import decode_keystore_json, privtoaddr
 
 """
@@ -60,6 +61,7 @@ class KeyStoreFile:
         self.password = None
         self.address = None
         self.uuid = None
+        self.alias = None
         self.keystoreObject = None
 
         if load:
@@ -80,6 +82,10 @@ class KeyStoreFile:
             self.keystoreObject = json.loads(keystore.read())
             self.address = add_0x_prefix(self.keystoreObject['address'])
             self.uuid = self.keystoreObject['id']
+
+            # Get the alias if it's available
+            with AccountMeta() as meta:
+                self.alias = meta.getAlias(self.address)
 
             log.info("Loaded account %s" % self.address)
 

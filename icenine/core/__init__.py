@@ -10,6 +10,8 @@ else:
     confPath = '~/.config/icenine/icenine.ini'
 CONFIG.read(os.path.expanduser(confPath))
 
+DEFAULT_DB_LOC = "~/.config/icenine/meta.db"
+
 LOG_LEVEL_TRANSLATE = {
     'debug': logging.DEBUG,
     'info': logging.INFO,
