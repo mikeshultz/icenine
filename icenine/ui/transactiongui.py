@@ -39,7 +39,7 @@ class Ui_transactionDialog(object):
 
     def retranslateUi(self, transactionDialog):
         _translate = QtCore.QCoreApplication.translate
-        transactionDialog.setWindowTitle(_translate("transactionDialog", "Dialog"))
+        transactionDialog.setWindowTitle(_translate("transactionDialog", "Signed Raw Transaction"))
         self.groupBox.setTitle(_translate("transactionDialog", "Raw Transaction"))
         self.label.setText(_translate("transactionDialog", "You can now safely take this raw transaction and enter it in any publicly available service or personal node you like. "))
 

@@ -54,6 +54,17 @@ class AccountMeta(object):
             return result[0]
         return None
 
+    def getAliases(self):
+        """ Get all aliases """
+
+        self.curse.execute("SELECT alias, address FROM alias")
+
+        result = self.curse.fetchall()
+
+        if result and len(result) > 0:
+            return result
+        return None
+
     def addAlias(self, address, alias):
         """ Add an alias """
 

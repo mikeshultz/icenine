@@ -294,15 +294,15 @@
     <addaction name="actionBackup"/>
     <addaction name="actionSave_All_Accounts"/>
    </widget>
-   <widget class="QMenu" name="menuContacts">
+   <widget class="QMenu" name="menuAliases">
     <property name="title">
-     <string>Contacts</string>
+     <string>Aliases</string>
     </property>
-    <addaction name="actionAdd_Contact"/>
-    <addaction name="actionView_Contacts"/>
+    <addaction name="actionAdd_Alias"/>
+    <addaction name="actionView_Aliases"/>
     <addaction name="separator"/>
-    <addaction name="actionImport_Contacts"/>
-    <addaction name="actionExport_Contacts"/>
+    <addaction name="actionImport_Aliases"/>
+    <addaction name="actionExport_Aliases"/>
    </widget>
    <widget class="QMenu" name="menuHelp">
     <property name="title">
@@ -311,7 +311,7 @@
     <addaction name="actionAbout_Icenine"/>
    </widget>
    <addaction name="menuFile"/>
-   <addaction name="menuContacts"/>
+   <addaction name="menuAliases"/>
    <addaction name="menuHelp"/>
   </widget>
   <action name="actionOpen_Keystore_File">
@@ -338,30 +338,30 @@
     <string>Ctrl+S</string>
    </property>
   </action>
-  <action name="actionAdd_Contact">
+  <action name="actionAdd_Alias">
    <property name="text">
-    <string>Add Contact</string>
+    <string>Add Alias</string>
    </property>
    <property name="shortcut">
     <string>Alt+A</string>
    </property>
   </action>
-  <action name="actionView_Contacts">
+  <action name="actionView_Aliases">
    <property name="text">
-    <string>View Contacts</string>
+    <string>View Aliases</string>
    </property>
    <property name="shortcut">
     <string>Alt+C</string>
    </property>
   </action>
-  <action name="actionImport_Contacts">
+  <action name="actionImport_Aliases">
    <property name="text">
-    <string>Import Contacts</string>
+    <string>Import Aliases</string>
    </property>
   </action>
-  <action name="actionExport_Contacts">
+  <action name="actionExport_Aliases">
    <property name="text">
-    <string>Export Contacts</string>
+    <string>Export Aliases</string>
    </property>
   </action>
   <action name="actionAbout_Icenine">

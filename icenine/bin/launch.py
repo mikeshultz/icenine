@@ -23,9 +23,10 @@ from PyQt5.QtWidgets import (
         QMessageBox, 
         QFileDialog, 
         QListWidget,
-        QAction
+        QAction,
+        QTableWidgetItem
     )
-from icenine.ui import gui, passwordgui, aboutgui, transactiongui#, AccountsModel
+from icenine.ui import gui, passwordgui, aboutgui, transactiongui, aliasgui#, AccountsModel
 
 class AlertLevel(Enum):
     INFO = QMessageBox.Information
@@ -61,6 +62,31 @@ class TransactionDialog(QDialog, transactiongui.Ui_transactionDialog):
         self.setupUi(self)
         self.rawTransaction.setText(rawtx)
 
+class AliasWindow(QMainWindow, aliasgui.Ui_MainWindow):
+    def __init__(self, parent=None):
+        super(AliasWindow, self).__init__(parent)
+
+        # Create elements
+        self.setupUi(self)
+
+        self.aliases = []
+
+        with AccountMeta() as meta:
+            self.aliases = meta.getAliases()
+
+            if self.aliases:
+                # Set total rows
+                self.aliasTable.setRowCount(len(self.aliases))
+
+                # Populate the table
+                i = 0
+                for alias in self.aliases:
+                    self.aliasTable.setItem(i, 0, QTableWidgetItem(alias[0]))
+                    self.aliasTable.setItem(i, 1, QTableWidgetItem(alias[1]))
+
+            else:
+                self.aliasTable.setRowCount(0)
+
 class IceNine(QMainWindow, gui.Ui_Icenine):
     def __init__(self, parent=None):
         super(IceNine, self).__init__(parent)
@@ -83,10 +109,10 @@ class IceNine(QMainWindow, gui.Ui_Icenine):
         self.actionOpen_Keystore_File.triggered.connect(self.openKeyStore)
         self.actionBackup.triggered.connect(self.backup)
         self.actionSave_All_Accounts.triggered.connect(self.saveAll)
-        self.actionAdd_Contact.triggered.connect(self.addContact)
-        self.actionView_Contacts.triggered.connect(self.showContacts)
-        self.actionImport_Contacts.triggered.connect(self.importContacts)
-        self.actionExport_Contacts.triggered.connect(self.exportContacts)
+        self.actionAdd_Alias.triggered.connect(self.addAlias)
+        self.actionView_Aliases.triggered.connect(self.showAliases)
+        self.actionImport_Aliases.triggered.connect(self.importAliases)
+        self.actionExport_Aliases.triggered.connect(self.exportAliases)
         self.actionAbout_Icenine.triggered.connect(self.about)
 
         # Main Button
@@ -243,13 +269,17 @@ class IceNine(QMainWindow, gui.Ui_Icenine):
                     else:
                         log.warning("Account %s was not saved! Password not provided" % ksf.address)
 
-    def addContact(self):
+    def addAlias(self):
         pass
-    def showContacts(self):
+
+    def showAliases(self):
+        """ Open the window to display all aliases """
+        window = AliasWindow(self)
+        return window.show()
+
+    def importAliases(self):
         pass
-    def importContacts(self):
-        pass
-    def exportContacts(self):
+    def exportAliases(self):
         pass
 
     def about(self):
