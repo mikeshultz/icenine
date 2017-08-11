@@ -13,6 +13,8 @@ Ethereum cold storage wallet
 
     pyuic5 icenine/ui/mainwindow.ui -o icenine/ui/gui.py --import-from=icenine.ui
     pyuic5 icenine/ui/passwordmodal.ui -o icenine/ui/passwordgui.py --import-from=icenine.ui
+    pyuic5 icenine/ui/transactiondialog.ui -o icenine/ui/transactiongui.py --import-from=icenine.ui
+    pyuic5 icenine/ui/aboutmodal.ui -o icenine/ui/aboutgui.py --import-from=icenine.ui
 
 ### Generate Assets
 
@@ -27,7 +29,8 @@ checked for update often.
 ### [transactions.py](https://github.com/ethereum/pyethereum/blob/develop/ethereum/transactions.py) 
 (Last updated: 2017-08-08)
 
-This file was all hacked up.  It should really be reimplemented
+This file was all hacked up.  It should really be reimplemented into a separate 
+package.
 
 ### [keys.py](https://github.com/ethereum/pyethereum/blob/develop/ethereum/tools/keys.py) 
 (Last updated: 2017-08-08)
