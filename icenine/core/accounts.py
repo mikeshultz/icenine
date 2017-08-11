@@ -98,16 +98,23 @@ class KeyStoreFile:
                 The password to decrypt the file with
         """
 
-        self.info("Unlocking account %s" % self.address)
+        log.info("Unlocking account %s" % self.address)
+        log.debug("password used was %s" % password)
         
         # Decrypt
-        self.privkey = json_string = decode_keystore_json(self.keystoreObject, password)
-        self.pubkey = bitcoin.privtopub(self.privkey)
+        try:
+            self.privkey = json_string = decode_keystore_json(self.keystoreObject, password)
+            self.pubkey = bitcoin.privtopub(self.privkey)
+        except ValueError as e:
+            if "Password incorrect" in str(e):
+                raise PasswordException("Invalid password")
+            else:
+                raise e
 
     def lock(self):
         """ Get the important bits out of memory """
 
-        self.info("Locking account %s" % self.address)
+        log.info("Locking account %s" % self.address)
 
         self.privkey = None
         self.pubkey = None
@@ -178,6 +185,12 @@ class Accounts:
     def __iter__(self):
         return iter(self.accounts)
 
+    def get(self, addr):
+        """ Get an account by address """
+        for a in self.accounts:
+            if a.address == addr:
+                return a
+
     def load_accounts(self):
         """ Load all the accounts we can find in location """
 
@@ -193,7 +206,6 @@ class Accounts:
 
         elif self.loc.is_dir():
             for file in self.loc.iterdir():
-                print(file)
                 if file.is_file():
                     # Load the keystore file JSON but do not decrypt the private
                     # key until later. 

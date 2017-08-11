@@ -1,4 +1,5 @@
 import re
+import datetime
 from uuid import uuid4
 from secp256k1 import PrivateKey, PublicKey
 
@@ -29,3 +30,6 @@ def extract_address(val):
 
     if match:
         return match.group(1)
+
+def unix_time():
+    return int(datetime.datetime.utcnow().timestamp())

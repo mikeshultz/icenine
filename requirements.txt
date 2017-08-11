@@ -1,9 +1,11 @@
 ethereum-utils==0.3.2
 pbkdf2==1.3
 pysha3==1.0.2
-rlp==0.5.1
+rlp>=0.4.4
 secp256k1==0.13.2
 pycryptodome==3.4.6
 scrypt==0.8.0
 bitcoin==1.1.42
 PyQt5~=5.9
+py_ecc>=1.1.1
+web3>=3.11.1

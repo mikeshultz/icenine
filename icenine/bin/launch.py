@@ -1,13 +1,16 @@
 # -*- coding: utf-8 -*-
 import os
 import sys
+import rlp
+from web3 import Web3
 from enum import Enum
 from eth_utils.address import is_hex_address
-from eth_utils.hexidecimal import is_hex
+from eth_utils.hexidecimal import is_hex, encode_hex
 from eth_utils.types import is_integer
 from icenine.core import log
 from icenine.core.accounts import KEYSTORE_SYSTEM, PasswordException, Accounts, KeyStoreFile
 from icenine.core.utils import extract_address
+from icenine.core.metadata import AccountMeta
 from icenine.contrib.transactions import Transaction
 
 from PyQt5 import QtGui
@@ -22,17 +25,41 @@ from PyQt5.QtWidgets import (
         QListWidget,
         QAction
     )
-from icenine.ui import gui, passwordgui#, AccountsModel
+from icenine.ui import gui, passwordgui, aboutgui, transactiongui#, AccountsModel
 
 class AlertLevel(Enum):
     INFO = QMessageBox.Information
     WARNING = QMessageBox.Warning
     ERROR = QMessageBox.Critical
 
+class PasswordPromptResult(Enum):
+    SUCCESS = 1
+    CANCELED = 2
+    FAILED = 3
+
 class PasswordPrompt(QDialog, passwordgui.Ui_passwordDialog):
     def __init__(self, parent=None):
         super(PasswordPrompt, self).__init__(parent)
         self.setupUi(self)
+
+    def getPassword(account, parent=None):
+        """ Prompt for a password """
+        dialog = PasswordPrompt()
+        dialog.passwordAccountLabel.setText(str(account))
+        result = dialog.exec()
+        password = dialog.password.text()
+        return (result, password)
+
+class AboutModal(QDialog, aboutgui.Ui_aboutDialog):
+    def __init__(self, parent=None):
+        super(AboutModal, self).__init__(parent)
+        self.setupUi(self)
+
+class TransactionDialog(QDialog, transactiongui.Ui_transactionDialog):
+    def __init__(self, rawtx, parent=None):
+        super(TransactionDialog, self).__init__(parent)
+        self.setupUi(self)
+        self.rawTransaction.setText(rawtx)
 
 class IceNine(QMainWindow, gui.Ui_Icenine):
     def __init__(self, parent=None):
@@ -43,8 +70,10 @@ class IceNine(QMainWindow, gui.Ui_Icenine):
 
         self.accounts = []
         self.accountsModel = None
-        self.populateAccounts()
+        self.selectedAccount = None
 
+        self.populateAccounts()
+        self.populateForm()
         self.setupEvents()
 
     def setupEvents(self):
@@ -66,19 +95,55 @@ class IceNine(QMainWindow, gui.Ui_Icenine):
         #createTxAction.triggered.connect(self.createTransaction)
         self.createTransactionButton.clicked.connect(self.createTransaction)
 
+    def resetForm(self):
+        """ Clear and reset fields of the transaction form """
+
+        self.to.setText("")
+        self.amount.setText("")
+        self.data.setText("")
+
+        # Repopulate form
+        self.populateForm()
+
+    def populateForm(self):
+        """ Fill in form data that we can """
+
+        if not self.selectedAccount:
+            return
+
+        with AccountMeta() as meta:
+            # Use the last used gas price and gas limit
+            last_tx = meta.getLastTransaction(self.selectedAccount)
+            if last_tx:
+                self.gasPrice.setValue(Web3.fromWei(last_tx[2], "gwei"))
+                self.gasLimit.setText(str(last_tx[3]))
+
+            # Use the next nonce we have for the selected account
+            nonce = meta.getNonce(self.selectedAccount)
+            if nonce:
+                self.nonce.setText(str(nonce))
+            else:
+                self.nonce.setText("0")
+
     def triggerAccount(self, item):
         """ A new account was selected """
 
         # Get the address of the selected account
         selected = self.accounts.accounts[item.indexes()[0].row()].address
-        print(selected)
+        
         # Pull the address out of the item string
         addr = extract_address(selected)
+
+        # Set selected
+        self.selectedAccount = addr
 
         log.debug("Account %s selected" % addr)
         
         # Set the From account in the form
         self.fromAccount.setText(addr)
+
+        # Populate transaction form with last known values
+        self.populateForm()
 
     def populateAccounts(self):
         """ Fill out the accounts ListView """
@@ -91,7 +156,13 @@ class IceNine(QMainWindow, gui.Ui_Icenine):
             # Assemble the model
             self.accountsModel = QStandardItemModel(self)
             for acct in self.accounts.accounts:
-                self.accountsModel.appendRow(QStandardItem(acct.address))
+                
+                account_string = acct.address
+                
+                # Add the alias if we have it
+                if acct.alias:
+                    account_string = "(%s) - %s" % (acct.alias, acct.address)
+                self.accountsModel.appendRow(QStandardItem(account_string))
 
             # Create the list widget
             self.accountListView.setModel(self.accountsModel)
@@ -154,9 +225,7 @@ class IceNine(QMainWindow, gui.Ui_Icenine):
     def promptPassword(self, account_address):
         """ Get a password from a user for an account """
         
-        prompt = PasswordPrompt(self)
-        prompt.passwordAccountLabel.setText(QCoreApplication.translate("passwordDialog", account_address))
-        return prompt.exec()
+        return PasswordPrompt.getPassword(account_address)
 
     def backup(self):
         pass
@@ -182,8 +251,11 @@ class IceNine(QMainWindow, gui.Ui_Icenine):
         pass
     def exportContacts(self):
         pass
+
     def about(self):
-        pass
+        """ Show the About modal """
+        modal = AboutModal(self)
+        return modal.exec()
 
     def isFormValid(self):
         """ validate the transaction form """
@@ -236,6 +308,7 @@ class IceNine(QMainWindow, gui.Ui_Icenine):
 
         if self.tx['data']:
             try:
+                #assert(self.tx['data'] == "0x0" or is_hex(self.tx['data']))
                 assert(is_hex(self.tx['data']))
             except AssertionError:
                 log.warning("Invalid data")
@@ -269,23 +342,87 @@ class IceNine(QMainWindow, gui.Ui_Icenine):
         except (ValueError, KeyError): self.tx['amount'] = None
 
         try:
-            self.tx['data'] = self.data.toPlainText()
+            dat = self.data.toPlainText()
+            # Empty should be hex zero
+            #if not dat:
+            #    dat = "0x0"
+            self.tx['data'] = dat
         except (ValueError, KeyError): self.tx['data'] = None
 
         try:
             self.tx['to'] = self.to.text()
         except (ValueError, KeyError): self.tx['to'] = None
 
+    def unlockAccount(self, account):
+        """ Unlock an account """
+
+        result, password = self.promptPassword(self.selectedAccount)
+        if result:
+            try:
+                account.unlock(password)
+            except PasswordException as e:
+                log.debug(str(e))
+                return PasswordPromptResult.FAILED
+            return PasswordPromptResult.SUCCESS
+        else:
+            return PasswordPromptResult.CANCELED
+
     def createTransaction(self):
         """ Create a transaction with the entered data """
-        print("fuck")
+        
         log.debug("createTransaction")
 
         # Go through validation first
         if self.isFormValid():
-            # Assemble transaction
-            tx = Transaction(self.tx['nonce'], self.tx['gasPrice'], self.tx['gasLimit'], self.tx['to'], self.tx['amount'], self.tx['data'])
-            print(tx.to_dict())
+            # Make sure we have an account for signing
+            if not self.selectedAccount:
+                self.alert("You must select an account before creating a transaction")
+
+            # Get the current account
+            signing_account = self.accounts.get(self.selectedAccount)
+
+            # Unlock the account if necessary
+            while not signing_account.privkey:
+                try:
+                    # Try to unlock an account, but if the user cancels, quit
+                    if self.unlockAccount(signing_account) == PasswordPromptResult.CANCELED:
+                        break
+                except Exception as e:
+                    self.alert("Unknown error!", str(e), alert_type=AlertLevel.ERROR)
+
+            # If we have the private key, we can put the transaction together
+            if signing_account.privkey:
+                
+                # Assemble transaction
+                tx = Transaction(self.tx['nonce'], 
+                    Web3.toWei(self.tx['gasPrice'], 'gwei'), 
+                    self.tx['gasLimit'], self.tx['to'], 
+                    Web3.toWei(self.tx['amount'], "ether"), 
+                    self.tx['data']).sign(signing_account.privkey)
+                rawtx = encode_hex(rlp.encode(tx))
+                
+                log.debug(tx.to_dict())
+
+                dialog = TransactionDialog(rawtx, self)
+                okay = dialog.exec()
+
+                if okay:
+                    with AccountMeta() as meta:
+                        # Add the tx to the DB
+                        meta.addTransaction(encode_hex(tx.hash), self.tx['nonce'], 
+                            Web3.toWei(self.tx['gasPrice'], 'gwei'), 
+                            self.tx['gasLimit'], self.tx['to'], 
+                            Web3.toWei(self.tx['amount'], "ether"), 
+                            self.tx['data'], self.selectedAccount)
+
+                    # Reset the form if the transaction was accepted
+                    self.resetForm()
+
+                else:
+                    log.warning("User canceled transaction.  Transaction details and nonce will not be stored!")
+
+            else:
+                log.debug("User canceled account unlock")
 
 
 def main():

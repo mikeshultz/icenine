@@ -1,26 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>passwordDialog</class>
- <widget class="QDialog" name="passwordDialog">
-  <property name="windowModality">
-   <enum>Qt::ApplicationModal</enum>
-  </property>
+ <class>transactionDialog</class>
+ <widget class="QDialog" name="transactionDialog">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>668</width>
-    <height>110</height>
+    <width>635</width>
+    <height>324</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Enter account password</string>
+   <string>Dialog</string>
+  </property>
+  <property name="windowIcon">
+   <iconset>
+    <normalon>:/assets/images/icon.svg</normalon>
+   </iconset>
   </property>
   <widget class="QDialogButtonBox" name="buttonBox">
    <property name="geometry">
     <rect>
-     <x>320</x>
-     <y>70</y>
+     <x>290</x>
+     <y>290</y>
      <width>341</width>
      <height>32</height>
     </rect>
@@ -32,55 +34,57 @@
     <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
    </property>
   </widget>
+  <widget class="QGroupBox" name="groupBox">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>631</width>
+     <height>251</height>
+    </rect>
+   </property>
+   <property name="title">
+    <string>Raw Transaction</string>
+   </property>
+   <widget class="QTextBrowser" name="rawTransaction">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>30</y>
+      <width>611</width>
+      <height>211</height>
+     </rect>
+    </property>
+   </widget>
+  </widget>
   <widget class="QLabel" name="label">
    <property name="geometry">
     <rect>
      <x>10</x>
-     <y>10</y>
-     <width>191</width>
-     <height>17</height>
+     <y>260</y>
+     <width>611</width>
+     <height>41</height>
     </rect>
    </property>
    <property name="text">
-    <string>Enter password for account</string>
+    <string>You can now safely take this raw transaction and enter it in any publicly available service or personal node you like. </string>
    </property>
-  </widget>
-  <widget class="QLabel" name="passwordAccountLabel">
-   <property name="geometry">
-    <rect>
-     <x>200</x>
-     <y>10</y>
-     <width>461</width>
-     <height>17</height>
-    </rect>
+   <property name="wordWrap">
+    <bool>true</bool>
    </property>
-   <property name="text">
-    <string>FILLER</string>
-   </property>
-  </widget>
-  <widget class="QLineEdit" name="password">
-   <property name="geometry">
-    <rect>
-     <x>10</x>
-     <y>40</y>
-     <width>651</width>
-     <height>25</height>
-    </rect>
-   </property>
-   <property name="maxLength">
-    <number>1024</number>
-   </property>
-   <property name="echoMode">
-    <enum>QLineEdit::Password</enum>
+   <property name="textInteractionFlags">
+    <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
    </property>
   </widget>
  </widget>
- <resources/>
+ <resources>
+  <include location="assets/assets.qrc"/>
+ </resources>
  <connections>
   <connection>
    <sender>buttonBox</sender>
    <signal>accepted()</signal>
-   <receiver>passwordDialog</receiver>
+   <receiver>transactionDialog</receiver>
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel">
@@ -96,7 +100,7 @@
   <connection>
    <sender>buttonBox</sender>
    <signal>rejected()</signal>
-   <receiver>passwordDialog</receiver>
+   <receiver>transactionDialog</receiver>
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">

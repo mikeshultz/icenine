@@ -1,9 +1,18 @@
 # -*- coding: utf-8 -*-
 import rlp
+import secp256k1
 from rlp.sedes import big_endian_int, binary, Binary
 from rlp.utils import str_to_bytes, ascii_chr
 from eth_utils.address import to_normalized_address
-from eth_utils.hexidecimal import encode_hex
+from eth_utils.hexidecimal import encode_hex, decode_hex
+try:
+    from Crypto.Hash import keccak
+    sha3_256 = lambda x: keccak.new(digest_bits=256, data=x).digest()
+except ImportError:
+    import sha3 as _sha3
+    sha3_256 = lambda x: _sha3.keccak_256(x).digest()
+from py_ecc.secp256k1 import privtopub, ecdsa_raw_sign, ecdsa_raw_recover
+from icenine.contrib.keys import privtoaddr
 #from ethereum.utils import encode_hex
 
 #from ethereum.exceptions import InvalidTransaction
@@ -13,6 +22,68 @@ from eth_utils.hexidecimal import encode_hex
 #from ethereum.slogging import get_logger
 #from ethereum.utils import TT256, mk_contract_address, zpad, int_to_32bytearray, big_endian_to_int, ecsign, ecrecover_to_pub, normalize_key
 
+# Reimplemented from ethereum.utils
+def sha3(seed):
+    return sha3_256(to_string(seed))
+big_endian_to_int = lambda x: big_endian_int.deserialize(str_to_bytes(x).lstrip(b'\x00'))
+is_numeric = lambda x: isinstance(x, int)
+def bytearray_to_bytestr(value):
+    return bytes(value)
+def to_string(value):
+    if isinstance(value, bytes):
+        return value
+    if isinstance(value, str):
+        return bytes(value, 'utf-8')
+    if isinstance(value, int):
+        return bytes(str(value), 'utf-8')
+def normalize_address(x, allow_blank=False):
+    if is_numeric(x):
+        return int_to_addr(x)
+    if allow_blank and x in {'', b''}:
+        return b''
+    if len(x) in (42, 50) and x[:2] in {'0x', b'0x'}:
+        x = x[2:]
+    if len(x) in (40, 48):
+        x = decode_hex(x)
+    if len(x) == 24:
+        assert len(x) == 24 and sha3(x[:20])[:4] == x[-4:]
+        x = x[:20]
+    if len(x) != 20:
+        raise Exception("Invalid address format: %r" % x)
+    return x
+def normalize_key(key):
+    if is_numeric(key):
+        o = encode_int32(key)
+    elif len(key) == 32:
+        o = key
+    elif len(key) == 64:
+        o = decode_hex(key)
+    elif len(key) == 66 and key[:2] == '0x':
+        o = decode_hex(key[2:])
+    else:
+        raise Exception("Invalid key format: %r" % key)
+    if o == b'\x00' * 32:
+        raise Exception("Zero privkey invalid")
+    return o
+def safe_ord(value):
+    if isinstance(value, int):
+        return value
+    else:
+        return ord(value)
+def ecsign(rawhash, key):
+    if secp256k1 and hasattr(secp256k1, 'PrivateKey'):
+        pk = secp256k1.PrivateKey(key, raw=True)
+        signature = pk.ecdsa_recoverable_serialize(
+            pk.ecdsa_sign_recoverable(rawhash, raw=True)
+        )
+        signature = signature[0] + bytearray_to_bytestr([signature[1]])
+        v = safe_ord(signature[64]) + 27
+        r = big_endian_to_int(signature[0:32])
+        s = big_endian_to_int(signature[32:64])
+    else:
+        v, r, s = ecdsa_raw_sign(rawhash, key)
+    return v, r, s
+# end reimplementation
 
 #log = get_logger('eth.chain.tx')
 
@@ -65,8 +136,7 @@ class Transaction(rlp.Serializable):
     def __init__(self, nonce, gasprice, startgas, to, value, data, v=0, r=0, s=0):
         self.data = None
 
-        if to:
-            to = to_normalized_address(to)
+        to = normalize_address(to, allow_blank=True)
 
         super(Transaction, self).__init__(nonce, gasprice, startgas, to, value, data, v, r, s)
 
@@ -83,12 +153,12 @@ class Transaction(rlp.Serializable):
             else:
                 if self.v in (27, 28):
                     vee = self.v
-                    sighash = utils.sha3(rlp.encode(self, UnsignedTransaction))
+                    sighash = sha3(rlp.encode(self, UnsignedTransaction))
                 elif self.v >= 37:
                     vee = self.v - self.network_id * 2 - 8
                     assert vee in (27, 28)
                     rlpdata = rlp.encode(rlp.infer_sedes(self).serialize(self)[:-3] + [self.network_id, '', ''])
-                    sighash = utils.sha3(rlpdata)
+                    sighash = sha3(rlpdata)
                 else:
                     raise InvalidTransaction("Invalid V value")
                 if self.r >= secpk1n or self.s >= secpk1n or self.r == 0 or self.s == 0:
@@ -96,7 +166,7 @@ class Transaction(rlp.Serializable):
                 pub = ecrecover_to_pub(sighash, vee, self.r, self.s)
                 if pub == b"\x00" * 64:
                     raise InvalidTransaction("Invalid signature (zero privkey cannot sign)")
-                self._sender = utils.sha3(pub)[-20:]
+                self._sender = sha3(pub)[-20:]
         return self._sender
 
     @property
@@ -118,11 +188,11 @@ class Transaction(rlp.Serializable):
         A potentially already existing signature would be overridden.
         """
         if network_id is None:
-            rawhash = utils.sha3(rlp.encode(self, UnsignedTransaction))
+            rawhash = sha3(rlp.encode(self, UnsignedTransaction))
         else:
             assert 1 <= network_id < 2**63 - 18
             rlpdata = rlp.encode(rlp.infer_sedes(self).serialize(self)[:-3] + [network_id, b'', b''])
-            rawhash = utils.sha3(rlpdata)
+            rawhash = sha3(rlpdata)
 
         key = normalize_key(key)
 
@@ -130,12 +200,12 @@ class Transaction(rlp.Serializable):
         if network_id is not None:
             self.v += 8 + network_id * 2
 
-        self._sender = utils.privtoaddr(key)
+        self._sender = privtoaddr(key)
         return self
 
     @property
     def hash(self):
-        return utils.sha3(rlp.encode(self))
+        return sha3(rlp.encode(self))
 
     def to_dict(self):
         d = {}
@@ -169,7 +239,7 @@ class Transaction(rlp.Serializable):
         return isinstance(other, self.__class__) and self.hash < other.hash
 
     def __hash__(self):
-        return utils.big_endian_to_int(self.hash)
+        return big_endian_to_int(self.hash)
 
     def __ne__(self, other):
         return not self.__eq__(other)
