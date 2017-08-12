@@ -24,7 +24,8 @@ from PyQt5.QtWidgets import (
         QFileDialog, 
         QListWidget,
         QAction,
-        QTableWidgetItem
+        QTableWidgetItem,
+        QHeaderView
     )
 from icenine.ui import gui, passwordgui, aboutgui, transactiongui, aliasgui#, AccountsModel
 
@@ -96,6 +97,13 @@ class AliasWindow(QMainWindow, aliasgui.Ui_MainWindow):
 
         self.aliases = []
         self.blankRow = 0
+
+        # Set table headers
+        self.aliasTable.setHorizontalHeaderLabels(['Alias', 'Address'])
+
+        # Set column resizing
+        self.aliasTable.horizontalHeader().setSectionResizeMode(0, QHeaderView.ResizeToContents)
+        self.aliasTable.horizontalHeader().setSectionResizeMode(1, QHeaderView.Stretch)
 
         with AccountMeta() as meta:
             
@@ -183,9 +191,11 @@ class AliasWindow(QMainWindow, aliasgui.Ui_MainWindow):
             if addNew:
 
                 with AccountMeta() as meta:
-
+                    log.debug("Adding alias %s for %s" % (self.aliasTable.item(row, 0).text(), self.aliasTable.item(row, 1).text()))
                     # Add the new alias to the DB
                     meta.addAlias(self.aliasTable.item(row, 1).text(), self.aliasTable.item(row, 0).text())
+
+                log.debug("Adding new blank row")
 
                 # Since we just took our last row with a new alias, add another
                 aliasBlankItem = TableWidgetItem()
@@ -195,6 +205,8 @@ class AliasWindow(QMainWindow, aliasgui.Ui_MainWindow):
 
                 self.aliasTable.setItem(row+1, 0, aliasBlankItem)
                 self.aliasTable.setItem(row+1, 1, addressBlankItem)
+
+                self.aliasTable.setRowCount(row+2)
 
         # If it's not a blank row, we're updating one
         else:
