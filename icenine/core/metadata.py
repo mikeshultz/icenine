@@ -1,6 +1,7 @@
 import os
 import sqlite3
 import datetime
+from eth_utils.address import is_hex_address
 from icenine.core import CONFIG, DEFAULT_DB_LOC
 from icenine.core.utils import unix_time
 
@@ -32,8 +33,8 @@ class AccountMeta(object):
 
         # Create tables if necessary
         if self.create_tables:
-            self.curse.execute("CREATE TABLE alias (address text, alias text);")
-            self.curse.execute("CREATE TABLE trans (tx text, nonce integer, gasprice integer, startgas integer, to_address text, from_address text, value integer, data text, stamp integer);")
+            self.curse.execute("CREATE TABLE alias (address text UNIQUE, alias text);")
+            self.curse.execute("CREATE TABLE trans (tx text PRIMARY KEY, nonce integer, gasprice integer, startgas integer, to_address text, from_address text, value integer, data text, stamp integer);")
             self.create_tables = False
 
         # Give back ourselves
@@ -45,6 +46,9 @@ class AccountMeta(object):
 
     def getAlias(self, address):
         """ Get an alias for an address """
+
+        if not is_hex_address(address):
+            raise ValueError("Invalid address")
 
         self.curse.execute("SELECT alias FROM alias WHERE address = ?", [address])
 
@@ -68,8 +72,27 @@ class AccountMeta(object):
     def addAlias(self, address, alias):
         """ Add an alias """
 
+        if not is_hex_address(address):
+            raise ValueError("Invalid address")
+
         self.curse.execute("INSERT INTO alias (address,alias) VALUES (?,?)", 
             (address, alias))
+
+    def updateAliasAddress(self, alias, address):
+        """ Update the address for an alias """
+
+        if not is_hex_address(address):
+            raise ValueError("Invalid address")
+
+        self.curse.execute("UPDATE alias SET address = ? WHERE alias = ?", [address, alias])
+
+    def updateAliasAlias(self, address, alias):
+        """ Update the alias for an address """
+
+        if not is_hex_address(address):
+            raise ValueError("Invalid address")
+
+        self.curse.execute("UPDATE alias SET alias = ? WHERE address = ?", [alias, address])
 
     def getTransactions(self):
         """ Get all transactions """
@@ -87,6 +110,9 @@ class AccountMeta(object):
 
     def getLastTransaction(self, address=None):
         """ Return the latest transaction """
+
+        if not is_hex_address(address):
+            raise ValueError("Invalid address")
 
         if address:
             self.curse.execute("SELECT tx, nonce, gasprice, startgas, to_address, value, data, stamp FROM trans WHERE from_address = ? ORDER BY stamp DESC LIMIT 1", [address])
