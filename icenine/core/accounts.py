@@ -8,8 +8,9 @@ from eth_utils.hexidecimal import encode_hex, add_0x_prefix
 from eth_utils.address import is_hex_address
 from .utils import generate_uuid, is_uuid, new_keypair
 from icenine.core import log
+from icenine.core.utils import to_string
 from icenine.core.metadata import AccountMeta
-from icenine.contrib.keys import decode_keystore_json, privtoaddr
+from icenine.contrib.keys import make_keystore_json, decode_keystore_json, privtoaddr
 
 """
 Some helpful documentation:
@@ -137,17 +138,26 @@ class KeyStoreFile:
         if not privkey and not self.privkey:
             raise ValueError("Account does not appear to have been properly generated or loaded. Cannot save.")
 
+        # Set if we got new ones
         if privkey:
             self.privkey = privkey
-        self.password = password
-
+        if password:
+            self.password = password
+        
+        # Get the JSON object
         self.keystoreObject = make_keystore_json(self.privkey, self.password)
 
+        # Store the address if we don't have it already
+        if not self.address:
+            self.address = privtoaddr(self.privkey)
+
+        # If we don't have a set path, create one
         if not self.path:
-            self.loc = Path(os.path.join(KEYSTORE_SYSTEM, self.keystoreObject['id']))
+            self.path = Path(os.path.join(KEYSTORE_SYSTEM, self.keystoreObject['id']))
 
         log.info("Saving account %s to %s" % (self.address, self.path))
 
+        # Write the file
         with self.path.open('w') as keystore:
             
             keystore.write(json.dumps(self.keystoreObject))
