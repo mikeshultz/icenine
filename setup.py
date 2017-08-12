@@ -26,7 +26,7 @@ setup(
     url="https://github.com/mikeshultz/icenine",
     entry_points={
         'console_scripts': [
-            'icenine = icenine.bin.launch:main',
+            'icenine = icenine.ui.app:launch',
         ]
     },
     classifiers=[
