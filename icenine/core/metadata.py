@@ -15,8 +15,11 @@ class AccountMeta(object):
     """
 
     def __init__(self):
+        dbf = CONFIG.get('default', 'dbfile', fallback=DEFAULT_DB_LOC)
 
-        self.db_file = os.path.expanduser(CONFIG.get('default', 'dbfile', fallback=DEFAULT_DB_LOC))
+        log.debug("Opening database %s" % dbf)
+
+        self.db_file = os.path.expanduser(dbf)
         self.create_tables = False
 
         # If the db doesn't exist yet, we will need to recreate it
