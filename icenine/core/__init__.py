@@ -23,7 +23,10 @@ LOG_LEVEL_TRANSLATE = {
 log = logging.getLogger("icenine")
 
 # Set loglevel
-log.setLevel(LOG_LEVEL_TRANSLATE[CONFIG.get('default', 'loglevel', fallback='info')])
+if os.environ.get('BUILDENV'):
+    log.setLevel(LOG_LEVEL_TRANSLATE[CONFIG.get('default', 'loglevel', fallback='debug')])
+else:
+    log.setLevel(LOG_LEVEL_TRANSLATE[CONFIG.get('default', 'loglevel', fallback='info')])
 
 # Set log format
 standardFormat = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')

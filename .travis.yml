@@ -7,3 +7,5 @@ install:
   - pip install .
   - pip install -r requirements.txt
 script: pytest
+env:
+  - BUILDENV="travis-ci"
