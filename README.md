@@ -29,6 +29,16 @@ need to [install it manually](https://www.python.org/downloads/).
     accts = Accounts('.')
     accts.load_accounts()
 
+## Testing
+
+Dev dependencies should be installed first.
+
+    pip install -r requirements.dev.txt
+
+And a simple `pytest` command will run them all.
+
+    pytest
+
 ## UI Development
 
 ### Generate GUI
