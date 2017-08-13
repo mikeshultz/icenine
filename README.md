@@ -55,13 +55,3 @@ package.
 
 ### [keys.py](https://github.com/ethereum/pyethereum/blob/develop/ethereum/tools/keys.py) 
 (Last updated: 2017-08-08)
-
-## Notes
-
-- HD wallet is not suitable, jaxx is dropping it as well.
-- pyethereum is a full node implementation
-- pyetherapp is just a CLI util to interact with a node
-- web3.py may have helpful utils that can be used, but mostly it interacts with RPC/IPC nodes
-- ethereum-utils should be considered
-- secp256k1-py is our main library  https://github.com/ludbb/secp256k1-py
-
