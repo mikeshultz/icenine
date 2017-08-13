@@ -158,7 +158,7 @@ class KeyStoreFile:
 
         # If we don't have a set path, create one
         if not self.path:
-            self.path = Path(os.path.join(KEYSTORE_SYSTEM, self.keystoreObject['id']))
+            self.path = KEYSTORE_SYSTEM.joinpath(self.keystoreObject['id'])
 
         log.info("Saving account %s to %s" % (self.address, self.path))
 

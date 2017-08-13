@@ -41,7 +41,7 @@ class TestKeyStoreFile(object):
         """ Create a keystore file """
 
         # The keystore file we're going to create
-        newFilePath = os.path.join(KEYSTORE_SYSTEM, "keystore-%s" % accounts.mary.address)
+        newFilePath = KEYSTORE_SYSTEM.joinpath("keystore-%s" % accounts.mary.address)
 
         # Init the KSF object
         self.secondKsf = KeyStoreFile(file_path=newFilePath, load=False)
