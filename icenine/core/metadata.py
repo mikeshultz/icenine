@@ -2,7 +2,7 @@ import os
 import sqlite3
 import datetime
 from eth_utils.address import is_hex_address
-from icenine.core import CONFIG, DEFAULT_DB_LOC
+from icenine.core import CONFIG, DEFAULT_DB_LOC, log
 from icenine.core.utils import unix_time
 
 class AccountMeta(object):
