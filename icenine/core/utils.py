@@ -21,6 +21,8 @@ def generate_uuid():
 
 def is_uuid(val):
     """ Check if string is a UUID """
+    if not val or type(val) not in [str, bytes]:
+        return False
     if re.match(UUID_REGEX, val.strip()):
         return True
     else:

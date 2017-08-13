@@ -3,7 +3,7 @@ from setuptools import setup, find_packages
 
 cwd = os.path.dirname(os.path.abspath(inspect.stack()[0][1]))
 assets_dir = os.path.join(cwd, 'icenine', 'ui', 'assets')
-print(assets_dir)
+
 def package_files(directory):
     paths = []
     for (path, directories, filenames) in os.walk(directory):
@@ -12,11 +12,11 @@ def package_files(directory):
     return paths
 
 assets = package_files(assets_dir)
-print(assets)
+
 setup(
     name="icenine",
     version="0.0.1.dev1",
-    packages=find_packages(),
+    packages=find_packages(exclude=["tests.*", "tests"]),
     install_requires=open('requirements.txt').read().split('\n'),
     author="Mike Shultz",
     author_email="mike@gointo.software",

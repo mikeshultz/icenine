@@ -81,6 +81,7 @@ class KeyStoreFile:
         with self.path.open() as keystore:
             # Get the JSON object
             self.keystoreObject = json.loads(keystore.read())
+            print(self.keystoreObject)
             self.address = add_0x_prefix(self.keystoreObject['address'])
             self.uuid = self.keystoreObject['id']
 
@@ -150,6 +151,10 @@ class KeyStoreFile:
         # Store the address if we don't have it already
         if not self.address:
             self.address = privtoaddr(self.privkey)
+
+        # Store the uuid if we don't have it already
+        if not self.uuid:
+            self.uuid = self.keystoreObject['id']
 
         # If we don't have a set path, create one
         if not self.path:

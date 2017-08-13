@@ -144,6 +144,8 @@ def make_keystore_json(priv, pw, kdf="pbkdf2", cipher="aes-128-ctr"):
     # Make a UUID
     u = encode_hex(os.urandom(16))
     uuid = '-'.join((u[:8], u[8:12], u[12:16], u[16:20], u[20:]))
+    # Get the address
+    address = encode_hex(privtoaddr(priv))
     # Return the keystore json
     return {
         "crypto": {
@@ -155,6 +157,7 @@ def make_keystore_json(priv, pw, kdf="pbkdf2", cipher="aes-128-ctr"):
             "mac": encode_hex(mac),
             "version": 1
         },
+        "address": address,
         "id": uuid,
         "version": 3
     }
