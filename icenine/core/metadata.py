@@ -15,18 +15,25 @@ class AccountMeta(object):
     """
 
     def __init__(self):
-        dbf = CONFIG.get('default', 'dbfile', fallback=DEFAULT_DB_LOC)
+        dbf = os.path.expanduser(CONFIG.get('default', 'dbfile', fallback=DEFAULT_DB_LOC))
 
-        log.debug("Opening database %s" % dbf)
-
-        self.db_file = os.path.expanduser(dbf)
-        self.create_tables = False
+        self.db_file = dbf
+        self.create_database = False
 
         # If the db doesn't exist yet, we will need to recreate it
         if not os.path.exists(self.db_file):
-            self.create_tables = True
+            self.create_database = True
 
     def __enter__(self):
+
+        # Make sure the directories exist, too
+        if self.create_database:
+            d = os.path.dirname(self.db_file)
+            log.debug("Creating DB directory %s" % d)
+            os.makedirs(d, mode=0o750, exist_ok=True)
+
+        
+        log.debug("Opening database %s" % self.db_file)
 
         # Connect
         self.db = sqlite3.connect(self.db_file)
@@ -35,10 +42,10 @@ class AccountMeta(object):
         self.curse = self.db.cursor()
 
         # Create tables if necessary
-        if self.create_tables:
+        if self.create_database:
             self.curse.execute("CREATE TABLE alias (address text UNIQUE, alias text);")
             self.curse.execute("CREATE TABLE trans (tx text PRIMARY KEY, nonce integer, gasprice integer, startgas integer, to_address text, from_address text, value integer, data text, stamp integer);")
-            self.create_tables = False
+            self.create_database = False
 
         # Give back ourselves
         return self
