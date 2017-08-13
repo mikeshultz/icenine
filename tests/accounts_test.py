@@ -22,8 +22,7 @@ class TestKeyStoreFile(object):
 
     def test_create(self):
         """ Create a keystore file """
-        print("Jack: %s" % accounts.jack.privkey)
-        print("Jack: %s" % accounts.jack.address)
+        
         # Init the KSF
         self.firstKsf = KeyStoreFile(load=False)
 
