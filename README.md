@@ -1,5 +1,24 @@
 # icenine
+
 Ethereum cold storage wallet
+
+## Installation
+
+Icenine **requires** Python >= 3.5.  If you system does not have it, you will
+need to [install it manually](https://www.python.org/downloads/).
+
+### Using PyPi
+
+    pip install icenine
+
+### From Git
+
+    git clone https://github.com/mikeshultz/icenine.git && cd icenine
+    python setup.py install
+
+## Running
+
+    icenine
 
 ## API Usage
 
