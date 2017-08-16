@@ -3,7 +3,7 @@ import os
 import pytest
 sys.path.append(os.path.join(os.path.dirname(__file__), 'utils'))
 
-from eth_utils.address import to_normalized_address
+from eth_utils.address import to_normalized_address, is_address
 from icenine.core.utils import is_uuid
 from icenine.core.accounts import KEYSTORE_SYSTEM, KeyStoreFile, Accounts
 from testaccounts import TEST_PASSWORD, accounts
@@ -112,3 +112,21 @@ class TestAccounts(object):
         # previous test class
         assert to_normalized_address(shared_keystores['firstKsf'].address) in addresses
         assert to_normalized_address(shared_keystores['secondKsf'].address) in addresses
+
+    def test_new_account(self, shared_keystores):
+        """ Create a new private key and KSF """
+
+        accounts = Accounts()
+
+        shared_keystores['thirdKsf'] = accounts.new_account(TEST_PASSWORD)
+
+        # Make sure the KSF looks good
+        assert shared_keystores['thirdKsf'].password == TEST_PASSWORD
+        assert shared_keystores['thirdKsf'].privkey is not None
+        assert is_address(shared_keystores['thirdKsf'].address)
+        assert str(KEYSTORE_SYSTEM) in str(shared_keystores['thirdKsf'].path)
+        assert is_uuid(shared_keystores['thirdKsf'].uuid)
+
+        # Make sure it's in the object, too
+        addresses = [a.address for a in accounts.accounts]
+        assert shared_keystores['thirdKsf'].address in addresses

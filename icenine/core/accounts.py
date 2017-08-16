@@ -253,5 +253,10 @@ class Accounts:
         # Init the KeyStoreFile
         ksf = KeyStoreFile(load=False)
         ksf.save(password, privkey)
+
+        # Add the account to memory
+        self.accounts.append(ksf)
+
+        # Give it back, too
         return ksf
 
