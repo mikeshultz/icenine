@@ -1,7 +1,10 @@
 # icenine
 [![Build Status](https://travis-ci.org/mikeshultz/icenine.svg?branch=master)](https://travis-ci.org/mikeshultz/icenine) [![Coverage Status](https://coveralls.io/repos/github/mikeshultz/icenine/badge.svg?branch=master)](https://coveralls.io/github/mikeshultz/icenine?branch=master)
 
-Ethereum cold storage wallet
+Ethereum cold storage wallet written in Python.
+
+**NOTE: This software is currently ALPHA at BEST!  Use at your own risk and 
+ALWAYS back up your key files!**
 
 ## Installation
 
