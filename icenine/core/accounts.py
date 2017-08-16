@@ -81,7 +81,8 @@ class KeyStoreFile:
         with self.path.open() as keystore:
             # Get the JSON object
             self.keystoreObject = json.loads(keystore.read())
-            print(self.keystoreObject)
+            
+            # Assign some useful info bits
             self.address = add_0x_prefix(self.keystoreObject['address'])
             self.uuid = self.keystoreObject['id']
 
@@ -107,6 +108,7 @@ class KeyStoreFile:
         try:
             self.privkey = json_string = decode_keystore_json(self.keystoreObject, password)
             self.pubkey = bitcoin.privtopub(self.privkey)
+            self.password = password
         except ValueError as e:
             if "Password incorrect" in str(e):
                 raise PasswordException("Invalid password")
