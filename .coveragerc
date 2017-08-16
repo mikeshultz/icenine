@@ -1,2 +1,4 @@
 [run]
-omit=icenine/ui/*
+omit=
+    icenine/ui/*
+    setup.py
