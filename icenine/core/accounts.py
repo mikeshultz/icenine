@@ -253,5 +253,5 @@ class Accounts:
         # Init the KeyStoreFile
         ksf = KeyStoreFile(load=False)
         ksf.save(password, privkey)
-        return True
+        return ksf
 
