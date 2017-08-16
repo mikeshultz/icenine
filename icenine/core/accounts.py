@@ -41,6 +41,12 @@ class PasswordException(Exception):
 class KeyStoreFile:
     """ Model for a keystore file 
 
+        Usage
+        -----
+
+        # Load all accounts from file or folder
+        kp = KeyPair("/path/to/keystore")
+
         Attributes
         ----------
         privkey
@@ -178,8 +184,7 @@ class Accounts:
         -----
         # Load all accounts from default location
         accts = Accounts()
-        # Load all accounts from file or folder
-        kp = KeyPair("/path/to/keystore")
+        accts.load_accounts()
 
         Attributes
         ----------
