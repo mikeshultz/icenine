@@ -6,9 +6,9 @@ def test_accounts(amt):
     keys = []
     for account_number in range(amt):
         keys.append(new_keypair()[0])
-        #keys.append(sha3(to_string(account_number)))
+        
         accounts.append(privtoaddr(keys[-1]))
-        print("WTF: %s" % keys[-1])
+        
     return (keys, accounts)
 
 class Account(object):
