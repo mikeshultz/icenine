@@ -31,9 +31,10 @@ class AccountMeta(object):
 
         # Make sure the directories exist, too
         if self.create_database:
-            d = os.path.dirname(self.db_file)
-            log.debug("Creating DB directory %s" % d)
-            os.makedirs(d, mode=0o750, exist_ok=True)
+            if self.db_file != ':memory:':
+                d = os.path.dirname(self.db_file)
+                log.debug("Creating DB directory %s" % d)
+                os.makedirs(d, mode=0o750, exist_ok=True)
 
         
         log.debug("Opening database %s" % self.db_file)
@@ -124,7 +125,7 @@ class AccountMeta(object):
     def getLastTransaction(self, address=None):
         """ Return the latest transaction """
 
-        if not is_hex_address(address):
+        if address and not is_hex_address(address):
             raise ValueError("Invalid address")
 
         if address:
@@ -138,7 +139,7 @@ class AccountMeta(object):
         """ Add a transaction """
 
         self.curse.execute("INSERT INTO trans (tx, nonce, gasprice, startgas, to_address, value, data, stamp, from_address) VALUES (?,?,?,?,?,?,?,?,?)", 
-            (tx, nonce, gasprice, startgas, to, value, data, unix_time(), from_address))
+            (tx, nonce, gasprice, startgas, to, value, data, unix_time(True), from_address))
 
     def getNonce(self, address=None):
         """ Get the current nonce """

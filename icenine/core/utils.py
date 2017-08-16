@@ -49,9 +49,19 @@ def extract_address(val):
     if match:
         return match.group(1)
 
-def unix_time():
-    """ Get the current unix timestamp """
-    return int(datetime.datetime.utcnow().timestamp())
+def unix_time(micro=False):
+    """ Get the current unix timestamp 
+
+        Parameters
+        ----------
+        micro - boolean
+            If micro is set, microseconds will be included
+    """
+    stamp = datetime.datetime.utcnow().timestamp()
+    if micro:
+        return stamp
+    else:
+        return int(stamp)
 
 def privtoaddr(k):
     """ Turn a private key into an ethereum address """
