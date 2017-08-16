@@ -3,7 +3,7 @@ import os
 import pytest
 sys.path.append(os.path.join(os.path.dirname(__file__), 'utils'))
 
-from utils.testaccounts import accounts, transactions
+from testaccounts import accounts, transactions
 from icenine.core.metadata import AccountMeta
 
 TEST_DB_LOC=":memory:"
