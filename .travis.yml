@@ -6,6 +6,9 @@ install:
   - pip install .
   - pip install -r requirements.txt
   - pip install -r requirements.dev.txt
+  - pip install coveralls
 script: py.test --cov=icenine
 env:
   - BUILDENV="travis-ci"
+after_success:
+  coveralls
