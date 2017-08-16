@@ -14,8 +14,11 @@ class AccountMeta(object):
             nonce = meta.getNonce()
     """
 
-    def __init__(self):
-        dbf = os.path.expanduser(CONFIG.get('default', 'dbfile', fallback=DEFAULT_DB_LOC))
+    def __init__(self, db_location=None):
+        if db_location:
+            dbf = os.path.expanduser(db_location)
+        else:
+            dbf = os.path.expanduser(CONFIG.get('default', 'dbfile', fallback=DEFAULT_DB_LOC))
 
         self.db_file = dbf
         self.create_database = False
