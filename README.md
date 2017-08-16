@@ -1,5 +1,5 @@
 # icenine
-[![Build Status](https://travis-ci.org/mikeshultz/icenine.svg?branch=master)](https://travis-ci.org/mikeshultz/icenine)
+[![Build Status](https://travis-ci.org/mikeshultz/icenine.svg?branch=master)](https://travis-ci.org/mikeshultz/icenine) [![Coverage Status](https://coveralls.io/repos/github/mikeshultz/icenine/badge.svg?branch=master)](https://coveralls.io/github/mikeshultz/icenine?branch=master)
 
 Ethereum cold storage wallet
 
