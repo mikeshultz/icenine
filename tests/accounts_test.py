@@ -8,7 +8,7 @@ from icenine.core.utils import is_uuid
 from icenine.core.accounts import KEYSTORE_SYSTEM, KeyStoreFile, Accounts
 from testaccounts import TEST_PASSWORD, accounts
 
-@pytest.fixture(scope='class')
+@pytest.fixture(scope='module')
 def shared_keystores(request):
     """ Provide three KSF slots we can use between all tests """
     return {
@@ -40,7 +40,8 @@ class TestKeyStoreFile(object):
         assert is_uuid(shared_keystores['firstKsf'].uuid)
 
     def test_create_with_path(self, shared_keystores):
-        """ Create a keystore file """
+        """ Create a keystore file and make sure it can be reloaded from disk.
+        """
         
         # The keystore file we're going to create
         newFilePath = KEYSTORE_SYSTEM.joinpath("keystore-%s" % accounts.mary.address)
@@ -88,3 +89,26 @@ class TestKeyStoreFile(object):
         assert shared_keystores['firstKsf'].pubkey is not None
         assert shared_keystores['firstKsf'].password is not None
 
+
+@pytest.mark.usefixtures('shared_keystores')
+class TestAccounts(object):
+    """ Tests for Accounts object
+    """
+
+    def test_load(self, shared_keystores):
+        """ Load all pre-exising keystores saved to the default location """
+
+        accounts = Accounts()
+
+        # Load the accounts
+        accounts.load_accounts()
+
+        # Make sure we loaded some accounts
+        assert len(accounts.accounts) > 0
+
+        addresses = [a.address for a in accounts.accounts]
+
+        # Make sure both addresses exist in the two KSFs we created in the 
+        # previous test class
+        assert to_normalized_address(shared_keystores['firstKsf'].address) in addresses
+        assert to_normalized_address(shared_keystores['secondKsf'].address) in addresses
