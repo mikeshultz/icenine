@@ -59,8 +59,8 @@ def new_keypair_from_words(seedphrase=None):
         seedphrase = sw.random_seed_words()
 
     # Get first hash of it
-    h = sha3(seedphrase)
-
+    h = sha3(' '.join(seedphrase))
+    
     # Hash the hash about this many times
     for i in range(16384):
         h = sha3(h)
@@ -68,7 +68,6 @@ def new_keypair_from_words(seedphrase=None):
     # And a little bit more hashing
     while h[0] != 0:
         h = sha3(h)
-        print(h[0])
 
     pk = PrivateKey(h)
 
