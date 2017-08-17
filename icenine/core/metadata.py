@@ -109,10 +109,13 @@ class AccountMeta(object):
 
         self.curse.execute("UPDATE alias SET alias = ? WHERE address = ?", [alias, address])
 
-    def getTransactions(self):
+    def getTransactions(self, address=None):
         """ Get all transactions """
 
-        self.curse.execute("SELECT tx, nonce, gasprice, startgas, to_address, value, data, stamp, from_address FROM trans")
+        if address:
+            self.curse.execute("SELECT tx, nonce, gasprice, startgas, to_address, value, data, stamp, from_address FROM trans WHERE from_address = ? ORDER BY stamp", [address])
+        else:    
+            self.curse.execute("SELECT tx, nonce, gasprice, startgas, to_address, value, data, stamp, from_address FROM trans ORDER BY stamp")
 
         return self.curse.fetchall()
 

@@ -52,6 +52,7 @@ And a simple `pytest` command will run them all.
     pyuic5 icenine/ui/aboutmodal.ui -o icenine/ui/aboutgui.py --import-from=icenine.ui
     pyuic5 icenine/ui/aliaswindow.ui -o icenine/ui/aliasgui.py --import-from=icenine.ui
     pyuic5 icenine/ui/newaccountdialog.ui -o icenine/ui/newaccountgui.py --import-from=icenine.ui
+    pyuic5 icenine/ui/transactionwindow.ui -o icenine/ui/transactionwindowgui.py --import-from=icenine.ui
 
 ### Generate Assets
 
