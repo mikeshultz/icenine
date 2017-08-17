@@ -27,11 +27,11 @@ class SeedWords:
         ['fado', 'amuses', 'covey', 'swine', 'crazy', 'boobie', 'dope', 'offers', 'cagots', 'roined', 'crews', 'skewed']
     """
 
-    def __init__(self, dict_file=CONFIG.get('default', 'wordlist', fallback=None)):
+    def __init__(self, dict_file):
         if type(dict_file) is not str:
             raise TypeError("Invalid filename")
         elif not os.path.exists(dict_file):
-            raise ValueError("File not found")
+            raise FileNotFoundError("Dictionary file not found")
 
         self.dictionary_file = dict_file
         self.words = []

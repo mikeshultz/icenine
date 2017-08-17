@@ -11,6 +11,7 @@ else:
 CONFIG.read(os.path.expanduser(confPath))
 
 DEFAULT_DB_LOC = "~/.config/icenine/meta.db"
+WORDLIST = CONFIG.get('default', 'wordlist', fallback=os.path.join(os.path.dirname(__file__), "../contrib/words.txt"))
 
 LOG_LEVEL_TRANSLATE = {
     'debug': logging.DEBUG,

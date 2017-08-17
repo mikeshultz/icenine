@@ -5,7 +5,16 @@ import pytest
 sys.path.append(os.path.join(os.path.dirname(__file__), 'utils'))
 
 #from testaccounts import TEST_PASSWORD, accounts
-from icenine.core.utils import generate_uuid, is_uuid, to_string, new_keypair, extract_address, unix_time, privtoaddr
+from icenine.core.utils import (
+        generate_uuid, 
+        is_uuid, 
+        to_string, 
+        new_keypair, 
+        new_keypair_from_words,
+        extract_address, 
+        unix_time, 
+        privtoaddr
+    )
 
 class TestUtils(object):
     """ Tests for utils
@@ -46,3 +55,15 @@ class TestUtils(object):
         b = unix_time(True)
 
         assert b > a
+
+    def test_new_keypair_from_words(self):
+        """ Test keypair generation from seed words """
+
+        # Get first new pk with randomly chosen words
+        key_a = new_keypair_from_words()
+
+        # Create second keypair from the words from the original seedphrase
+        key_b = new_keypair_from_words(key_a[0])
+
+        # Make sure the PK is the same
+        assert key_a[1] == key_b[1]

@@ -6,6 +6,8 @@ from uuid import UUID, uuid4
 from secp256k1 import PrivateKey, PublicKey
 from eth_utils import to_normalized_address
 from Crypto.Hash import keccak
+from icenine.core import WORDLIST
+from icenine.core.seedwords import SeedWords
 
 sha3_256 = lambda x: keccak.new(digest_bits=256, data=x).digest()
 
@@ -42,6 +44,35 @@ def new_keypair():
     """ Create a new Ethereum-compatible keypair """
     pk = PrivateKey()
     return (pk.private_key, pk.pubkey.serialize())
+
+def new_keypair_from_words(seedphrase=None):
+    """ Create a new Ethereum-compatible keypair from a seedphrase
+
+        Notes
+        -----
+        Hashing algorithm is based off of parity seedphrase account generation
+    """
+
+    # Get a seedphrase if one is not provided
+    if not seedphrase:
+        sw = SeedWords(WORDLIST)
+        seedphrase = sw.random_seed_words()
+
+    # Get first hash of it
+    h = sha3(seedphrase)
+
+    # Hash the hash about this many times
+    for i in range(16384):
+        h = sha3(h)
+    
+    # And a little bit more hashing
+    while h[0] != 0:
+        h = sha3(h)
+        print(h[0])
+
+    pk = PrivateKey(h)
+
+    return (seedphrase, pk.private_key, pk.pubkey.serialize())
 
 def extract_address(val):
     """ Pull an address out of a string """

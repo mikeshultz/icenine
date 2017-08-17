@@ -16,7 +16,7 @@ assets = package_files(assets_dir)
 setup(
     name="icenine",
     version="0.0.1.dev1",
-    packages=find_packages(exclude=["tests.*", "tests"]),
+    packages=find_packages(exclude=["tests.*", "tests", "scripts", "docs"]),
     install_requires=open('requirements.txt').read().split('\n'),
     author="Mike Shultz",
     author_email="mike@gointo.software",
@@ -28,6 +28,9 @@ setup(
         'console_scripts': [
             'icenine = icenine.ui.app:launch',
         ]
+    },
+    package_data={
+        '': ['*.txt'] + assets,
     },
     classifiers=[
         "Development Status :: 3 - Alpha",
