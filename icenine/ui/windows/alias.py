@@ -2,6 +2,7 @@
 from eth_utils.address import is_hex_address
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QMainWindow, QHeaderView
+from icenine.core import log
 from icenine.core.metadata import AccountMeta
 from icenine.ui import aliasgui
 from icenine.ui.components.widgets import TableWidgetItem

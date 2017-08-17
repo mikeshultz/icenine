@@ -291,7 +291,10 @@
      <string>File</string>
     </property>
     <addaction name="actionOpen_Keystore_File"/>
-    <addaction name="actionBackup"/>
+    <addaction name="separator"/>
+    <addaction name="actionNew_Account"/>
+    <addaction name="actionImportFromSeed"/>
+    <addaction name="separator"/>
     <addaction name="actionSave_All_Accounts"/>
    </widget>
    <widget class="QMenu" name="menuAliases">
@@ -322,7 +325,7 @@
     <string>Ctrl+O</string>
    </property>
   </action>
-  <action name="actionBackup">
+  <action name="actionImportFromSeed">
    <property name="text">
     <string>Import From Seed</string>
    </property>
@@ -367,6 +370,11 @@
   <action name="actionAbout_Icenine">
    <property name="text">
     <string>About Icenine</string>
+   </property>
+  </action>
+  <action name="actionNew_Account">
+   <property name="text">
+    <string>New Account</string>
    </property>
   </action>
  </widget>

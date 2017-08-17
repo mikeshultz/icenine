@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'icenine/ui/mainwindow.ui'
 #
-# Created by: PyQt5 UI code generator 5.7
+# Created by: PyQt5 UI code generator 5.9
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -172,8 +172,8 @@ class Ui_Icenine(object):
         Icenine.setMenuBar(self.menubar)
         self.actionOpen_Keystore_File = QtWidgets.QAction(Icenine)
         self.actionOpen_Keystore_File.setObjectName("actionOpen_Keystore_File")
-        self.actionBackup = QtWidgets.QAction(Icenine)
-        self.actionBackup.setObjectName("actionBackup")
+        self.actionImportFromSeed = QtWidgets.QAction(Icenine)
+        self.actionImportFromSeed.setObjectName("actionImportFromSeed")
         self.actionSave_All_Accounts = QtWidgets.QAction(Icenine)
         self.actionSave_All_Accounts.setObjectName("actionSave_All_Accounts")
         self.actionAdd_Alias = QtWidgets.QAction(Icenine)
@@ -186,8 +186,13 @@ class Ui_Icenine(object):
         self.actionExport_Aliases.setObjectName("actionExport_Aliases")
         self.actionAbout_Icenine = QtWidgets.QAction(Icenine)
         self.actionAbout_Icenine.setObjectName("actionAbout_Icenine")
+        self.actionNew_Account = QtWidgets.QAction(Icenine)
+        self.actionNew_Account.setObjectName("actionNew_Account")
         self.menuFile.addAction(self.actionOpen_Keystore_File)
-        self.menuFile.addAction(self.actionBackup)
+        self.menuFile.addSeparator()
+        self.menuFile.addAction(self.actionNew_Account)
+        self.menuFile.addAction(self.actionImportFromSeed)
+        self.menuFile.addSeparator()
         self.menuFile.addAction(self.actionSave_All_Accounts)
         self.menuAliases.addAction(self.actionAdd_Alias)
         self.menuAliases.addAction(self.actionView_Aliases)
@@ -221,8 +226,8 @@ class Ui_Icenine(object):
         self.menuHelp.setTitle(_translate("Icenine", "Help"))
         self.actionOpen_Keystore_File.setText(_translate("Icenine", "Open Keystore"))
         self.actionOpen_Keystore_File.setShortcut(_translate("Icenine", "Ctrl+O"))
-        self.actionBackup.setText(_translate("Icenine", "Import From Seed"))
-        self.actionBackup.setShortcut(_translate("Icenine", "Ctrl+B"))
+        self.actionImportFromSeed.setText(_translate("Icenine", "Import From Seed"))
+        self.actionImportFromSeed.setShortcut(_translate("Icenine", "Ctrl+B"))
         self.actionSave_All_Accounts.setText(_translate("Icenine", "Save All Accounts"))
         self.actionSave_All_Accounts.setShortcut(_translate("Icenine", "Ctrl+S"))
         self.actionAdd_Alias.setText(_translate("Icenine", "Add Alias"))
@@ -232,5 +237,6 @@ class Ui_Icenine(object):
         self.actionImport_Aliases.setText(_translate("Icenine", "Import Aliases"))
         self.actionExport_Aliases.setText(_translate("Icenine", "Export Aliases"))
         self.actionAbout_Icenine.setText(_translate("Icenine", "About Icenine"))
+        self.actionNew_Account.setText(_translate("Icenine", "New Account"))
 
 from icenine.ui import assets_rc

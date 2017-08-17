@@ -30,7 +30,10 @@ from icenine.ui import gui
 from icenine.ui.components.dialogs import (
         PasswordPrompt, 
         AboutModal, 
-        TransactionDialog
+        TransactionDialog,
+        NewAccountDialog,
+        RANDOM_TAB,
+        SEED_TAB
     )
 from icenine.ui.windows.alias import AliasWindow
 
@@ -66,7 +69,8 @@ class IceNine(QMainWindow, gui.Ui_Icenine):
 
         # Menu Bar Menu
         self.actionOpen_Keystore_File.triggered.connect(self.openKeyStore)
-        self.actionBackup.triggered.connect(self.backup)
+        self.actionNew_Account.triggered.connect(self.newAccount)
+        self.actionImportFromSeed.triggered.connect(self.importFromSeed)
         self.actionSave_All_Accounts.triggered.connect(self.saveAll)
         self.actionAdd_Alias.triggered.connect(self.addAlias)
         self.actionView_Aliases.triggered.connect(self.showAliases)
@@ -164,8 +168,15 @@ class IceNine(QMainWindow, gui.Ui_Icenine):
         """
 
         if self.accounts:
+            # Clear UI
             self.accountsModel.clear()
+
+            # Reload from disk
+            self.accounts.load_accounts()
+
+            # Iterate loaded accounts
             for acct in self.accounts.accounts:
+                # Add it to the list
                 self.accountsModel.appendRow(QStandardItem(acct.address))
 
     def alert(self, title, message, additional=None, detail=None, alert_type=AlertLevel.INFO):
@@ -237,6 +248,20 @@ class IceNine(QMainWindow, gui.Ui_Icenine):
         pass
     def exportAliases(self):
         pass
+
+    def newAccount(self, window=RANDOM_TAB):
+        """ Open the new account window """
+
+        newAccountWindow = NewAccountDialog()
+        newAccountWindow.createAccountTabs.setTabEnabled(window, True)
+        newAccountWindow.exec()
+
+        # Load the new guy
+        self.refreshAccounts()
+
+    def importFromSeed(self):
+        """ OPen the new account window on the seed tab """
+        self.newAccount(window=SEED_TAB)
 
     def about(self):
         """ Show the About modal """
