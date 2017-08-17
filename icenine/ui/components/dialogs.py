@@ -4,7 +4,8 @@ from icenine.core import log
 from icenine.core.accounts import KeyStoreFile
 from icenine.core.utils import to_string, privtoaddr, new_keypair, new_keypair_from_words
 from PyQt5.QtWidgets import QDialog
-from icenine.ui import passwordgui, aboutgui, transactiongui, newaccountgui
+from icenine.ui import AlertLevel, PasswordPromptResult, passwordgui, aboutgui, transactiongui, newaccountgui
+from icenine.ui.app import AlertLevel
 
 
 class PasswordPrompt(QDialog, passwordgui.Ui_passwordDialog):
@@ -42,6 +43,7 @@ class NewAccountDialog(QDialog, newaccountgui.Ui_newAccountDialog):
         # Setup button events
         self.generateRandomButton.clicked.connect(self.generateRandomAccount)
         self.generateWordsButton.clicked.connect(self.generateWordsAccount)
+        self.loadWordsButton.clicked.connect(self.loadFromWords)
         self.buttonBox.accepted.connect(self.save)
         self.buttonBox.rejected.connect(self.cancel)
 
@@ -104,6 +106,45 @@ class NewAccountDialog(QDialog, newaccountgui.Ui_newAccountDialog):
 
         # 100%
         self.accountGenerationProgress.setValue(100)
+
+    def loadFromWords(self):
+        """ Load/create an account from words provided by user """
+
+        log.info("UI: Generating account from seed words")
+
+        # 10%
+        self.accountGenerationProgress.setValue(10)
+
+        seedphrase = self.seedWords.toPlainText()
+
+        if len(seedphrase) < 48:
+            parent.alert("Low entropy!", "Provided seed phrase has a low amount of entropy and is insecure.  Consider using more words.", alert_type=AlertLevel.WARNING)
+
+        # Generate keys from the phrase
+        digestedseed, privkey, pubkey = new_keypair_from_words(seedphrase)
+
+        log.debug("New phrase: %s - New key - %s" % (' '.join(seedphrase), pubkey))
+
+        # If this isn't the same, something went seriously wrong in processing
+        assert digestedseed == seedphrase
+
+        # 60%
+        self.accountGenerationProgress.setValue(60)
+
+        # Set for future reference
+        self.currentWordsKeyPair = (privkey, pubkey)
+
+        # 75%
+        self.accountGenerationProgress.setValue(75)
+
+        # Populate UI
+        self.privateKeySeed.setText(encode_hex(privkey))
+        self.addressSeed.setText(privtoaddr(privkey))
+
+        # 100%
+        self.accountGenerationProgress.setValue(100)
+
+
 
     def save(self):
         """ Save the generated keypair """
