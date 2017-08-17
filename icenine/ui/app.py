@@ -3,7 +3,6 @@ import os
 import sys
 import rlp
 from web3 import Web3
-from enum import Enum
 from eth_utils.address import is_hex_address
 from eth_utils.hexidecimal import is_hex, encode_hex
 from eth_utils.types import is_integer
@@ -26,7 +25,7 @@ from PyQt5.QtWidgets import (
         QFileDialog, 
         QAction
     )
-from icenine.ui import gui
+from icenine.ui import gui, AlertLevel, PasswordPromptResult
 from icenine.ui.components.dialogs import (
         PasswordPrompt, 
         AboutModal, 
@@ -36,17 +35,7 @@ from icenine.ui.components.dialogs import (
         SEED_TAB
     )
 from icenine.ui.windows.alias import AliasWindow
-
-class AlertLevel(Enum):
-    INFO = QMessageBox.Information
-    WARNING = QMessageBox.Warning
-    ERROR = QMessageBox.Critical
-
-
-class PasswordPromptResult(Enum):
-    SUCCESS = 1
-    CANCELED = 2
-    FAILED = 3
+from icenine.ui.windows.transactions import TransactionWindow
 
 
 class IceNine(QMainWindow, gui.Ui_Icenine):
@@ -77,6 +66,7 @@ class IceNine(QMainWindow, gui.Ui_Icenine):
         self.actionImport_Aliases.triggered.connect(self.importAliases)
         self.actionExport_Aliases.triggered.connect(self.exportAliases)
         self.actionAbout_Icenine.triggered.connect(self.about)
+        self.actionView_Transactions.triggered.connect(self.showTransactions)
 
         # Main Button
         self.createTransactionButton.clicked.connect(self.createTransaction)
@@ -248,6 +238,11 @@ class IceNine(QMainWindow, gui.Ui_Icenine):
         pass
     def exportAliases(self):
         pass
+
+    def showTransactions(self):
+        """ Open the window to display all aliases """
+        window = TransactionWindow(self)
+        return window.show()
 
     def newAccount(self, window=RANDOM_TAB):
         """ Open the new account window """
