@@ -20,7 +20,7 @@ ALWAYS back up your key files!**
 
 ## Installation
 
-Icenine **requires** Python >= 3.5.  If you system does not have it, you will
+Icenine **requires** Python >= 3.5.  If your system does not have it, you will
 need to [install it manually](https://www.python.org/downloads/).
 
 ### Using PyPi
