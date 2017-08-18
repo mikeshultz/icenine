@@ -40,3 +40,13 @@ package.
 
 ### [keys.py](https://github.com/ethereum/pyethereum/blob/develop/ethereum/tools/keys.py) 
 (Last updated: 2017-08-08)
+
+## Creating a Release
+
+1) Recreate or `rebase` the `release` branch.
+2) Update `VERSION` in `icenine/core/__init__.py`
+3) Update `version` and `download_url` in `setup.py`
+4) Commit
+5) Tag release with PEP440 version number prefixed with 'v'
+6) Push to `origin`
+7) `python setup.py sdist upload -r pypitest`

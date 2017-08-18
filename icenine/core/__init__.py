@@ -3,7 +3,7 @@ import sys
 import logging
 import configparser
 
-VERSION = "0.0.1.dev1"
+VERSION = "0.0.1.a1"
 
 CONFIG = configparser.ConfigParser()
 if sys.platform == 'win32':
