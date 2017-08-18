@@ -29,5 +29,6 @@ need to [install it manually](https://www.python.org/downloads/).
 ## See Also
 
 [API Usage](docs/api.md)
-[Import/Export Aliases](docs/aliases.md)
+[Configuration](docs/config.md)
 [Development Notes](docs/development.md)
+[Import/Export Aliases](docs/aliases.md)
