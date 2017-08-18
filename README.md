@@ -32,3 +32,4 @@ need to [install it manually](https://www.python.org/downloads/).
 - [Configuration](docs/config.md)
 - [Development Notes](docs/development.md)
 - [Import/Export Aliases](docs/aliases.md)
+- [Key File Management](docs/keys.md)
