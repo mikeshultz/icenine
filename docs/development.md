@@ -49,4 +49,5 @@ package.
 4) Commit
 5) Tag release with PEP440 version number prefixed with 'v'
 6) Push to `origin`
-7) `python setup.py sdist upload -r pypitest`
+7) `python setup.py sdist upload -r [repos]`
+8) Merge release changes back into `master`
