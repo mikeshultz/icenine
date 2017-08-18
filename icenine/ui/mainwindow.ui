@@ -249,24 +249,9 @@
           </widget>
          </item>
          <item>
-          <widget class="QToolButton" name="createTransactionButton">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
+          <widget class="QPushButton" name="createTransactionButton">
            <property name="text">
-            <string>Create Transaction </string>
-           </property>
-           <property name="popupMode">
-            <enum>QToolButton::MenuButtonPopup</enum>
-           </property>
-           <property name="toolButtonStyle">
-            <enum>Qt::ToolButtonTextOnly</enum>
-           </property>
-           <property name="arrowType">
-            <enum>Qt::DownArrow</enum>
+            <string>Create Transaction</string>
            </property>
           </widget>
          </item>
