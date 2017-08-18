@@ -25,8 +25,6 @@ need to [install it manually](https://www.python.org/downloads/).
 
 ### Using PyPi
 
-**Not yet implemented**
-
     pip install icenine
 
 ### From Git
