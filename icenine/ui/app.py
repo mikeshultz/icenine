@@ -15,13 +15,14 @@ from icenine.core.accounts import (
     )
 from icenine.core.utils import extract_address
 from icenine.core.metadata import AccountMeta
+from icenine.core.export import ExportCSV
 from icenine.contrib.transactions import Transaction
 
 from PyQt5.QtGui import QStandardItemModel, QStandardItem
 from PyQt5.QtWidgets import (
         QMainWindow, 
         QApplication, 
-        QMessageBox, 
+        QMessageBox,
         QFileDialog, 
         QAction
     )
@@ -61,7 +62,6 @@ class IceNine(QMainWindow, gui.Ui_Icenine):
         self.actionNew_Account.triggered.connect(self.newAccount)
         self.actionImportFromSeed.triggered.connect(self.importFromSeed)
         self.actionSave_All_Accounts.triggered.connect(self.saveAll)
-        self.actionAdd_Alias.triggered.connect(self.addAlias)
         self.actionView_Aliases.triggered.connect(self.showAliases)
         self.actionImport_Aliases.triggered.connect(self.importAliases)
         self.actionExport_Aliases.triggered.connect(self.exportAliases)
@@ -226,18 +226,49 @@ class IceNine(QMainWindow, gui.Ui_Icenine):
                     else:
                         log.warning("Account %s was not saved! Password not provided" % ksf.address)
 
-    def addAlias(self):
-        pass
-
     def showAliases(self):
         """ Open the window to display all aliases """
         window = AliasWindow(self)
         return window.show()
 
     def importAliases(self):
-        pass
+        """ Import Alias CSV to DB """
+
+        log.debug("showing importAliases dialog")
+
+        # Prompt for keystore file
+        fname = QFileDialog.getOpenFileName(self, 'Import CSV from...', os.path.expanduser('~'))
+
+        if fname[0]:
+
+            log.info("Opening alias CSV %s" % fname[0])
+
+            try:
+                xport = ExportCSV(fname[0])
+                xport.importAliases()
+                log.info("Imported aliases!")
+            except Exception as e:
+                self.alert('Unknown error!', str(e), alert_type=AlertLevel.ERROR)
+            finally:
+                self.showAliases()
+
     def exportAliases(self):
-        pass
+        """ Export Alias DB to CSV """
+
+        log.debug("showing exportAliases dialog")
+
+        # Prompt for keystore file
+        fname = QFileDialog.getSaveFileName(self, 'Export CSV to...', os.path.expanduser('~'))
+
+        if fname[0]:
+
+            log.info("Saving alias CSV %s" % fname[0])
+
+            try:
+                xport = ExportCSV(fname[0])
+                xport.exportAliases()
+            except Exception as e:
+                self.alert('Unknown error!', str(e), alert_type=AlertLevel.ERROR)
 
     def showTransactions(self):
         """ Open the window to display all aliases """
