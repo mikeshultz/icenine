@@ -20,7 +20,7 @@ setup(
     install_requires=open('requirements.txt').read().split('\n'),
     author="Mike Shultz",
     author_email="mike@gointo.software",
-    description="An Ethereum cold storage wallet",
+    description="A graphical Ethereum cold storage wallet",
     license="GPLv3+",
     keywords="ethereum wallet cold storage air gapped",
     url="https://github.com/mikeshultz/icenine",
