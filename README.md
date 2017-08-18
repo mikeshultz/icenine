@@ -10,7 +10,7 @@ Graphical Ethereum cold storage wallet written in Python.
 - Stores transactions for later reference
 - Keeps track of current nonce and remembers last gas price and limit
 - Can create accounts as needed from a random seed or seed words
-- Can import seed words used for other wallets(NEEDS TESTING!)
+- Can import seed words used for other wallets [NEEDS TESTING!]
 - Can import standard keystore files from other wallets like go-ethereum(geth)
 - Has address alias support so you can give accounts regular words for names
 - Can run on any operating system with at least Python 3.4
