@@ -16,7 +16,7 @@ assets = package_files(assets_dir)
 
 setup(
     name="icenine",
-    version="0.1.0.a1",
+    version="0.1.0a2",
     packages=find_packages(exclude=["tests.*", "tests", "scripts", "docs"]),
     install_requires=open('requirements.txt').read().split('\n'),
     author="Mike Shultz",
@@ -25,7 +25,7 @@ setup(
     license="GPLv3+",
     keywords="ethereum wallet cold storage air gapped",
     url="https://github.com/mikeshultz/icenine",
-    download_url="https://github.com/mikeshultz/icenine/archive/v0.1.0.a1.tar.gz",
+    download_url="https://github.com/mikeshultz/icenine/archive/v0.1.0a2.tar.gz",
     entry_points={
         'console_scripts': [
             'icenine = icenine.ui.app:launch',
