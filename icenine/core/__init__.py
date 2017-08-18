@@ -3,6 +3,8 @@ import sys
 import logging
 import configparser
 
+VERSION = "0.0.1.dev1"
+
 CONFIG = configparser.ConfigParser()
 if sys.platform == 'win32':
     confPath = '~/AppData/icenine/icenine.ini'

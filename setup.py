@@ -1,5 +1,6 @@
 import os, inspect
 from setuptools import setup, find_packages
+from .icenine.core import VERSION
 
 cwd = os.path.dirname(os.path.abspath(inspect.stack()[0][1]))
 assets_dir = os.path.join(cwd, 'icenine', 'ui', 'assets')
@@ -15,7 +16,7 @@ assets = package_files(assets_dir)
 
 setup(
     name="icenine",
-    version="0.0.1.dev1",
+    version=VERSION,
     packages=find_packages(exclude=["tests.*", "tests", "scripts", "docs"]),
     install_requires=open('requirements.txt').read().split('\n'),
     author="Mike Shultz",

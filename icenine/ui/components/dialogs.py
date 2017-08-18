@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from eth_utils.hexidecimal import encode_hex
-from icenine.core import log
+from icenine.core import log, VERSION
 from icenine.core.accounts import KeyStoreFile
 from icenine.core.utils import to_string, privtoaddr, new_keypair, new_keypair_from_words
 from PyQt5.QtWidgets import QDialog
@@ -25,6 +25,7 @@ class AboutModal(QDialog, aboutgui.Ui_aboutDialog):
     def __init__(self, parent=None):
         super(AboutModal, self).__init__(parent)
         self.setupUi(self)
+        self.versionNumber.setText("Version %s" % VERSION)
 
 class TransactionDialog(QDialog, transactiongui.Ui_transactionDialog):
     def __init__(self, rawtx, parent=None):

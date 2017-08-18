@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'icenine/ui/aboutmodal.ui'
 #
-# Created by: PyQt5 UI code generator 5.7
+# Created by: PyQt5 UI code generator 5.9
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -23,7 +23,7 @@ class Ui_aboutDialog(object):
         self.label.setPixmap(QtGui.QPixmap(":/assets/images/icon.svg"))
         self.label.setObjectName("label")
         self.label_2 = QtWidgets.QLabel(aboutDialog)
-        self.label_2.setGeometry(QtCore.QRect(120, 250, 141, 61))
+        self.label_2.setGeometry(QtCore.QRect(10, 250, 351, 61))
         font = QtGui.QFont()
         font.setPointSize(26)
         font.setBold(True)
@@ -33,11 +33,12 @@ class Ui_aboutDialog(object):
         self.label_2.setScaledContents(False)
         self.label_2.setAlignment(QtCore.Qt.AlignCenter)
         self.label_2.setObjectName("label_2")
-        self.label_3 = QtWidgets.QLabel(aboutDialog)
-        self.label_3.setGeometry(QtCore.QRect(140, 300, 91, 17))
-        self.label_3.setObjectName("label_3")
+        self.versionNumber = QtWidgets.QLabel(aboutDialog)
+        self.versionNumber.setGeometry(QtCore.QRect(10, 300, 351, 20))
+        self.versionNumber.setAlignment(QtCore.Qt.AlignCenter)
+        self.versionNumber.setObjectName("versionNumber")
         self.label_4 = QtWidgets.QLabel(aboutDialog)
-        self.label_4.setGeometry(QtCore.QRect(50, 320, 271, 17))
+        self.label_4.setGeometry(QtCore.QRect(10, 320, 351, 20))
         self.label_4.setAlignment(QtCore.Qt.AlignCenter)
         self.label_4.setOpenExternalLinks(True)
         self.label_4.setObjectName("label_4")
@@ -49,7 +50,7 @@ class Ui_aboutDialog(object):
         _translate = QtCore.QCoreApplication.translate
         aboutDialog.setWindowTitle(_translate("aboutDialog", "About IceNine"))
         self.label_2.setText(_translate("aboutDialog", "IceNine"))
-        self.label_3.setText(_translate("aboutDialog", "Version X.X.X"))
+        self.versionNumber.setText(_translate("aboutDialog", "Version X.X.X"))
         self.label_4.setText(_translate("aboutDialog", "<html><head/><body><p><a href=\"https://github.com/mikeshultz/icenine\"><span style=\" text-decoration: underline; color:#0000ff;\">https://github.com/mikeshultz/icenine</span></a></p></body></html>"))
 
 from icenine.ui import assets_rc
