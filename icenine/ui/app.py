@@ -13,7 +13,7 @@ from icenine.core.accounts import (
         Accounts, 
         KeyStoreFile
     )
-from icenine.core.utils import extract_address
+from icenine.core.utils import extract_address, is_number
 from icenine.core.metadata import AccountMeta
 from icenine.core.export import ExportCSV
 from icenine.contrib.transactions import Transaction
@@ -301,7 +301,7 @@ class IceNine(QMainWindow, gui.Ui_Icenine):
         self._coherceForm()
         
         try:
-            assert(is_hex_address(self.tx['fromAccount']))
+            assert is_hex_address(self.tx['fromAccount'])
         except AssertionError:
             log.warning("Invalid from account address")
             self.fromAccount.selectAll()
@@ -309,7 +309,7 @@ class IceNine(QMainWindow, gui.Ui_Icenine):
             return False
 
         try:
-            assert(is_hex_address(self.tx['to']))
+            assert is_hex_address(self.tx['to'])
         except AssertionError:
             log.warning("Invalid to account address")
             self.to.selectAll()
@@ -317,8 +317,8 @@ class IceNine(QMainWindow, gui.Ui_Icenine):
             return False
 
         try:
-            assert(is_integer(self.tx['nonce']))
-            assert(self.tx['nonce'] >= 0)
+            assert is_integer(self.tx['nonce'])
+            assert self.tx['nonce'] >= 0
         except AssertionError:
             log.warning("Invalid nonce")
             self.nonce.selectAll()
@@ -326,8 +326,8 @@ class IceNine(QMainWindow, gui.Ui_Icenine):
             return False
 
         try:
-            assert(is_integer(self.tx['gasPrice']))
-            assert(self.tx['gasPrice'] >= 0)
+            assert is_integer(self.tx['gasPrice'])
+            assert self.tx['gasPrice'] >= 0
         except AssertionError:
             log.warning("Invalid gas price")
             self.gasPrice.selectAll()
@@ -335,8 +335,9 @@ class IceNine(QMainWindow, gui.Ui_Icenine):
             return False
 
         try:
-            assert(is_integer(self.tx['amount']))
-            assert(self.tx['amount'] >= 0)
+            log.debug("Checking if %s is a number" % self.tx['amount'])
+            assert is_number(self.tx['amount'])
+            assert self.tx['amount'] >= 0
         except AssertionError:
             log.warning("Invalid amount")
             self.amount.selectAll()
@@ -346,7 +347,7 @@ class IceNine(QMainWindow, gui.Ui_Icenine):
         if self.tx['data']:
             try:
                 #assert(self.tx['data'] == "0x0" or is_hex(self.tx['data']))
-                assert(is_hex(self.tx['data']))
+                assert is_hex(self.tx['data'])
             except AssertionError:
                 log.warning("Invalid data")
                 self.data.selectAll()
@@ -375,7 +376,7 @@ class IceNine(QMainWindow, gui.Ui_Icenine):
         except (ValueError, KeyError): self.tx['gasLimit'] = None
 
         try:
-            self.tx['amount'] = int(self.amount.text())
+            self.tx['amount'] = float(self.amount.text())
         except (ValueError, KeyError): self.tx['amount'] = None
 
         try:

@@ -25,12 +25,22 @@ def is_uuid(val):
     """ Check if string is a UUID """
     if val and type(val) == UUID:
         return True
-    if not val or type(val) not in [str, bytes]:
+    if not val or type(val) not in (str, bytes):
         return False
     if re.match(UUID_REGEX, val.strip()):
         return True
     else:
         return False
+
+def is_number(val):
+    """ Check if a value is a number """
+    if not val:
+        return False
+    if type(val) in (int, float):
+        return True
+    if re.match(r'^[0-9]+\.?[0-9]*$', val):
+        return True
+    return False
 
 def to_string(value):
     if isinstance(value, bytes):
