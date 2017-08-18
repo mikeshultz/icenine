@@ -6,6 +6,8 @@ from eth_utils.address import is_hex_address
 from icenine.core import CONFIG, DEFAULT_DB_LOC, log
 from icenine.core.utils import unix_time
 
+IntegrityError = sqlite3.IntegrityError
+
 class AccountMeta(object):
     """ DB operations class for meta data 
 
