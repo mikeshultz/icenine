@@ -26,6 +26,10 @@ And a simple `pytest` command will run them all.
 
     pyrcc5 icenine/ui/assets/assets.qrc -o icenine/ui/assets_rc.py
 
+### Build For Windows
+
+    pynsist installer.cfg && cd build/nsis && zip ../icenine-[version].win32.zip *
+
 ## Contrib Libraries
 
 This is awful, but some modules have been brought in from pyethereum so the 
