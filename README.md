@@ -27,6 +27,11 @@ need to [install it manually](https://www.python.org/downloads/).
 
     pip install icenine
 
+### Windows
+
+1) Download a Windows build from [the releases page](https://github.com/mikeshultz/icenine/releases).
+2) Run it and follow the prompts
+
 ### From Git
 
     git clone https://github.com/mikeshultz/icenine.git && cd icenine
