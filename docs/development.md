@@ -26,10 +26,6 @@ And a simple `pytest` command will run them all.
 
     pyrcc5 icenine/ui/assets/assets.qrc -o icenine/ui/assets_rc.py
 
-### Build For Windows
-
-    pynsist installer.cfg && cd build/nsis && zip ../icenine-[version].win32.zip *
-
 ## Contrib Libraries
 
 This is awful, but some modules have been brought in from pyethereum so the 
@@ -55,3 +51,11 @@ package.
 6) Push to `origin`
 7) `python setup.py sdist upload -r [repos]`
 8) Merge release changes back into `master`
+
+### Build For Windows
+
+Build the Windows installer.
+
+    pynsist installer.cfg && cd build/nsis && zip ../icenine-[version].win32.zip *
+
+Then upload it to the GitHub release for the release tag that was just created.
